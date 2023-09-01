@@ -27,3 +27,12 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x0
     EDITTEXT        IDC_CREDITS,7,37,119,65,ES_MULTILINE | ES_AUTOVSCROLL | 
                     ES_READONLY | NOT WS_BORDER,WS_EX_TRANSPARENT
 }
+
+
+IDTX_BKG      RCDATA "../assets/background.png"
+IDTX_BELLY    RCDATA "../assets/belly.png"
+IDTX_BODY     RCDATA "../assets/body.png"
+IDTX_NOSE     RCDATA "../assets/nose.png"
+IDTX_HOUR     RCDATA "../assets/hour-hand.png"
+IDTX_MINUTE   RCDATA "../assets/minute-hand.png"
+IDTX_PENDULUM RCDATA "../assets/pendulum.png"

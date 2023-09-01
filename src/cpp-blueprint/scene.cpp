@@ -1,5 +1,6 @@
 
 #include "scene.h"
+#include "../assets.h"
 
 #include <d3d8.h>
 #include <d3dx8.h>
@@ -26,8 +27,6 @@ IDirect3DTexture8* pTXMinute;
 IDirect3DTexture8* pTXHour;
 IDirect3DTexture8* pTXNose;
 
-TCHAR szAppPath[MAX_PATH];
-
 
 D3DMATRIX mxUniform = {
 	1.0f,	0.0f,	0.0f,	0.0f,
@@ -39,30 +38,12 @@ D3DMATRIX mxUniform = {
 
 BOOL GeometryInitialize()
 {
-	TCHAR szFile[MAX_PATH];
-	lstrcpy(szFile, szAppPath);
-	PathAppend(szFile, "data\\belly.png");
-	D3DXCreateTextureFromFileEx(pD3DDevice, szFile, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXBelly);
-
-	lstrcpy(szFile, szAppPath);
-	PathAppend(szFile, "data\\pendulum.png");
-	D3DXCreateTextureFromFileEx(pD3DDevice, szFile, 128, 128, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXPendulum);
-
-	lstrcpy(szFile, szAppPath);
-	PathAppend(szFile, "data\\cogsworth.png");
-	D3DXCreateTextureFromFileEx(pD3DDevice, szFile, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXCogs);
-
-	lstrcpy(szFile, szAppPath);
-	PathAppend(szFile, "data\\minute hand.png");
-	D3DXCreateTextureFromFileEx(pD3DDevice, szFile, 64, 64, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_TRIANGLE | D3DX_FILTER_DITHER, 0, 0, NULL, NULL, &pTXMinute);
-
-	lstrcpy(szFile, szAppPath);
-	PathAppend(szFile, "data\\hour hand.png");
-	D3DXCreateTextureFromFileEx(pD3DDevice, szFile, 64, 64, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_TRIANGLE | D3DX_FILTER_DITHER, 0, 0, NULL, NULL, &pTXHour);
-
-	lstrcpy(szFile, szAppPath);
-	PathAppend(szFile, "data\\nose.png");
-	D3DXCreateTextureFromFileEx(pD3DDevice, szFile, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_TRIANGLE | D3DX_FILTER_DITHER, 0, 0, NULL, NULL, &pTXNose);
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_BELLY, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXBelly);
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_PENDULUM, 128, 128, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXPendulum);
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_BODY, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXCogs);
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_MINUTE, 64, 64, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_TRIANGLE | D3DX_FILTER_DITHER, 0, 0, NULL, NULL, &pTXMinute);
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_HOUR, 64, 64, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_TRIANGLE | D3DX_FILTER_DITHER, 0, 0, NULL, NULL, &pTXHour);
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_NOSE, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_TRIANGLE | D3DX_FILTER_DITHER, 0, 0, NULL, NULL, &pTXNose);
 
 
 	CUSTOMVERTEX pVertices[] = {

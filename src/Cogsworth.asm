@@ -36,9 +36,7 @@ ENDM
 
 
 CreateTexture MACRO texture, file, size
-  invoke lstrcpy, ADDR szFile, ADDR szStartupPath
-  invoke PathAppend, ADDR szFile, ADDR file
-  invoke D3DXCreateTextureFromFileEx, pD3DDevice, ADDR szFile, size, size, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR, 0, 0, NULL, NULL, ADDR texture
+  invoke D3DXCreateTextureFromResourceEx, pD3DDevice, NULL, file, size, size, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR, 0, 0, NULL, NULL, ADDR texture
 ENDM
 
 
@@ -115,9 +113,6 @@ CUSTOMVERTEX ENDS
 
 .data?
   hInst HINSTANCE ?
-  szStartupPath db MAX_PATH DUP(?)
-
-  szFile db MAX_PATH DUP(?)
 
 
 
@@ -127,9 +122,6 @@ CUSTOMVERTEX ENDS
 
         invoke GetModuleHandle, NULL
         mov hInst, eax
-
-        invoke GetModuleFileName, NULL, ADDR szStartupPath, MAX_PATH
-        invoke PathRemoveFileSpec, ADDR szStartupPath
 
         invoke WinMain, hInst, NULL, NULL, SW_SHOWDEFAULT
         invoke ExitProcess, eax
@@ -362,23 +354,22 @@ CUSTOMVERTEX ENDS
 
 
     D3DTextures PROC
-        .data
-          szBkg db "data\background.png", 0
-          szBelly db "data\belly.png", 0
-          szCogsworth db "data\cogsworth.png", 0
-          szPendulum db "data\pendulum.png", 0
-          szMinute db "data\minute hand.png", 0
-          szHour db "data\hour hand.png", 0
-          szNose db "data\nose.png", 0
+        IDTX_BKG      EQU 301
+        IDTX_BELLY    EQU 302
+        IDTX_BODY     EQU 303
+        IDTX_NOSE     EQU 304
+        IDTX_HOUR     EQU 305
+        IDTX_MINUTE   EQU 306
+        IDTX_PENDULUM EQU 307
 
         .code
-        CreateTexture pTXBkg, szBkg, 256
-        CreateTexture pTXBelly, szBelly, 256
-        CreateTexture pTXCogs, szCogsworth, 256
-        CreateTexture pTXPendulum, szPendulum, 128
-        CreateTexture pTXMinute, szMinute, 64
-        CreateTexture pTXHour, szHour, 64
-        CreateTexture pTXNose, szNose, 256
+        CreateTexture pTXBkg, IDTX_BKG, 256
+        CreateTexture pTXBelly, IDTX_BELLY, 256
+        CreateTexture pTXCogs, IDTX_BODY, 256
+        CreateTexture pTXPendulum, IDTX_PENDULUM, 128
+        CreateTexture pTXMinute, IDTX_MINUTE, 64
+        CreateTexture pTXHour, IDTX_HOUR, 64
+        CreateTexture pTXNose, IDTX_NOSE, 256
 
         ret
     D3DTextures ENDP

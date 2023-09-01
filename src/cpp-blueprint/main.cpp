@@ -88,9 +88,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int)
 {
 	hInst = hInstance;
-	
-	GetModuleFileName(NULL, szAppPath, MAX_PATH);
-    PathRemoveFileSpec(szAppPath);
 
 	WNDCLASSEX wc = { sizeof(WNDCLASSEX), NULL/*CS_CLASSDC*/, WndProc, 0L, 0L,
 		hInst, NULL, LoadCursor(NULL, IDC_ARROW), NULL, NULL, TEXT("DirectCogsworth"), NULL };

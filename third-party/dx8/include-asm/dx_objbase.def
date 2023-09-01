@@ -1,0 +1,30 @@
+;* This envelopes objbase.def
+;* Used by DirectX Assembly include files.
+;* (C) Sergey Chaban <soul_cat@mindless.com> 
+;* (C) hardCode <http://bizarrecreations.webjump.com>
+;* Thanks to Mike Bibby
+
+IFNDEF _DX_OBJBASE_
+_DX_OBJBASE_=1
+
+include objbase.def
+
+_ZeroMemory MACRO Dest,Size
+ push edi
+ lea edi,Dest
+ sub eax,eax
+ IF ((Size AND 11b) EQ 0)
+  mov ecx,Size/4
+  rep stosd
+ ELSE
+  mov ecx,Size
+  rep stosb
+ ENDIF
+ pop edi
+ENDM
+
+ifndef _EXT_GUIDS
+ _EXT_GUIDS=FALSE
+endif
+
+ENDIF ;// _DX_OBJBASE_

@@ -20,6 +20,7 @@ IDirect3D8* pD3D;
 IDirect3DDevice8* pD3DDevice;
 IDirect3DVertexBuffer8* pVB;
 
+IDirect3DTexture8* pTXBackground;
 IDirect3DTexture8* pTXBelly;
 IDirect3DTexture8* pTXCogs;
 IDirect3DTexture8* pTXPendulum;
@@ -38,6 +39,7 @@ D3DMATRIX mxUniform = {
 
 BOOL GeometryInitialize()
 {
+	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_BKG, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXBackground);
 	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_BELLY, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXBelly);
 	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_PENDULUM, 128, 128, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXPendulum);
 	D3DXCreateTextureFromResourceEx(pD3DDevice, NULL, (LPCTSTR)IDTX_BODY, 256, 256, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR/*POINT*/, 0, 0, NULL, NULL, &pTXCogs);
@@ -126,6 +128,8 @@ void D3DUnInitialize()
 		pTXPendulum->Release();
 	if (pTXBelly)
 		pTXBelly->Release();
+	if (pTXBackground)
+		pTXBackground->Release();
 
 	if (pVB)
 		pVB->Release();
@@ -197,6 +201,8 @@ void Render(HWND hWnd)
 	
 
 	pD3DDevice->SetTransform(D3DTS_WORLD, &mxUniform);
+	pD3DDevice->SetTexture(0, pTXBackground);
+	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 	pD3DDevice->SetTexture(0, pTXBelly);
 	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 

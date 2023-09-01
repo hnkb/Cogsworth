@@ -1,55 +1,37 @@
-;///////////////////////////////////////////////////////////////////////////
-;//
-;//  Copyright (C) 1999 Microsoft Corporation.  All Rights Reserved.
-;//
-;//  File:       d3dx8.h
-;//  Content:    D3DX utility library
-;//
-;///////////////////////////////////////////////////////////////////////////
+D3DX_DEFAULT equ 0FFFFFFFFh
 
-;#ifndef __D3DX8_H__
-;#define __D3DX8_H__
-IFNDEF _D3DX8_INC_
-_D3DX8_INC_=1
 
-;#include <d3d8.h>
-include d3d8.inc
+D3DXMATRIX struct
+    _11			FLOAT		?
+    _12			FLOAT		?
+    _13			FLOAT		?
+    _14			FLOAT		?
+    _21			FLOAT		?
+    _22			FLOAT		?
+    _23			FLOAT		?
+    _24			FLOAT		?
+    _31			FLOAT		?
+    _32			FLOAT		?
+    _33			FLOAT		?
+    _34			FLOAT		?
+    _41			FLOAT		?
+    _42			FLOAT		?
+    _43			FLOAT		?
+    _44			FLOAT		?
+D3DXMATRIX ends
 
-;#include <limits.h>
-;include limits.inc ;<--not done, yet
+D3DXMatrixRotationZ   PROTO :Dword, :FLOAT
+D3DXMatrixTranslation PROTO :DWORD, :FLOAT, :FLOAT, :FLOAT
+D3DXMatrixMultiply    PROTO :DWORD, :DWORD, :DWORD
 
-;#ifndef D3DXINLINE
-IFNDEF D3DXINLINE
-    ;#ifdef __cplusplus
-    IFDEF __cplusplus
-        ;#define D3DXINLINE inline
-        D3DXINLINE      equ     inline 
-    ;#else
-    ELSE
-        ;#define D3DXINLINE _inline
-        D3DXINLINE      equ     _inline 
-    ;#endif
-    ENDIF
-;#endif
-ENDIF
 
-;#define D3DX_DEFAULT ULONG_MAX
-D3DX_DEFAULT                equ     ULONG_MAX
-;#define D3DX_DEFAULT_FLOAT FLT_MAX
-D3DX_DEFAULT_FLOAT          equ     FLT_MAX
+D3DX_FILTER_NONE		equ	1
+D3DX_FILTER_POINT		equ	2
+D3DX_FILTER_LINEAR		equ	3
+D3DX_FILTER_TRIANGLE		equ	4
+D3DX_FILTER_BOX			equ	5
 
-;#include "d3dx8math.h"
-include d3dx8math.inc
-;#include "d3dx8core.h"
-include d3dx8core.inc
-;#include "d3dx8tex.h"
-include d3dx8tex.inc
-;#include "d3dx8mesh.h"
-include d3dx8mesh.inc
-;#include "d3dx8shape.h"
-include d3dx8shape.inc
-;#include "d3dx8effect.h"
-include d3dx8effect.inc
-
-;#endif //__D3DX8_H__
-ENDIF ;_D3DX8_INC_
+D3DXCreateTextureFromFileExA     PROTO :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
+D3DXCreateTextureFromResourceExA PROTO :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
+D3DXCreateTextureFromFileEx   	equ	D3DXCreateTextureFromFileExA
+D3DXCreateTextureFromResourceEx   	equ	D3DXCreateTextureFromResourceExA

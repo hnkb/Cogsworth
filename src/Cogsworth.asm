@@ -11,10 +11,7 @@ include shlwapi.inc
 include msvcrt.inc
 
 include d3d8.inc
-;include d3dx8.inc
-D3DX_DEFAULT equ 0FFFFFFFFh
-include d3dx8math.inc
-include d3dx8tex.inc
+include d3dx8.inc
 
 
 

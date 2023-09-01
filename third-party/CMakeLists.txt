@@ -13,8 +13,11 @@ target_link_options(dx8 INTERFACE "/SAFESEH:NO")
 
 
 
-add_library(masm32 INTERFACE)
+add_library(masm32 SHARED IMPORTED GLOBAL)
 
 target_include_directories(masm32 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/masm32/include)
-target_link_directories(masm32 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/masm32/lib)
-target_link_libraries(masm32 INTERFACE msvcrt.lib)
+set_target_properties(masm32
+    PROPERTIES
+        IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/masm32/bin/msvcr70.dll"
+        IMPORTED_IMPLIB   "${CMAKE_CURRENT_SOURCE_DIR}/masm32/lib/msvcrt.lib"
+)

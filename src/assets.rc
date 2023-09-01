@@ -1,20 +1,9 @@
 
 #include <winres.h>
-
-#define IDI_COGSWORTH 101
-
-#define IDM_MAIN 102
-#define IDM_ABOUT 103
-#define IDM_CLOSE 104
-
-#define IDD_ABOUT 201
-#define IDC_CREDITS 202
-#define IDOK 1
-
+#include "assets.h"
 
 
 IDI_COGSWORTH ICON "../assets/Cogsworth.ico"
-
 
 
 IDM_MAIN MENU
@@ -27,15 +16,14 @@ IDM_MAIN MENU
 }
 
 
-
 IDD_ABOUT DIALOGEX 0, 0, 133, 130
 STYLE /*DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS |*/ DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Cogsworth"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
+{
     DEFPUSHBUTTON   "OK",IDOK,39,109,50,14
     LTEXT           "Cogsworth",IDC_STATIC,7,7,36,8
     LTEXT           "If it ain't Baroque, don't fix it!",IDC_STATIC,7,16,96,8
     EDITTEXT        IDC_CREDITS,7,37,119,65,ES_MULTILINE | ES_AUTOVSCROLL | 
                     ES_READONLY | NOT WS_BORDER,WS_EX_TRANSPARENT
-END
+}

@@ -1,6 +1,6 @@
 
 add_executable(cogsworth-cpp WIN32
-    "assets.rc"
+    "../assets.rc"
     "scene.cpp"
     "main.cpp"
 )

@@ -1,6 +1,6 @@
 
 #include "scene.h"
-#include "assets.h"
+#include "../assets.h"
 
 HINSTANCE hInst;
 

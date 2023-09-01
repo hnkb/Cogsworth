@@ -6,8 +6,6 @@ option casemap:none
 
 
 include windows.inc
-include kernel32.inc
-include user32.inc
 include shlwapi.inc
 
 include msvcrt.inc

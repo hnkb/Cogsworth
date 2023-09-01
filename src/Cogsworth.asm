@@ -5,23 +5,18 @@
 option casemap:none
 
 
+include windows.inc
+include kernel32.inc
+include user32.inc
+include shlwapi.inc
 
-include \masm32\include\windows.inc
-include \masm32\include\kernel32.inc
-include \masm32\include\user32.inc
-include \masm32\include\gdi32.inc
-include \masm32\include\shlwapi.inc
-include \masm32\include\d3dx8.inc
-include \masm32\include\winextra.def
+include msvcrt.inc
 
-includelib \masm32\lib\kernel32.lib
-includelib \masm32\lib\user32.lib
-includelib \masm32\lib\gdi32.lib
-includelib \masm32\lib\shlwapi.lib
-includelib \masm32\lib\advapi32.lib
-includelib \masm32\lib\msvcrt.lib
-includelib \masm32\lib\d3d8.lib
-includelib \masm32\lib\D3dx8.lib
+include d3d8.inc
+;include d3dx8.inc
+D3DX_DEFAULT equ 0FFFFFFFFh
+include d3dx8math.inc
+include d3dx8tex.inc
 
 
 
@@ -38,7 +33,8 @@ FailCheck MACRO
     ret
   .ENDIF
 ENDM
-
+
+
 CreateTexture MACRO texture, file, size
   invoke lstrcpy, ADDR szFile, ADDR szStartupPath
   invoke PathAppend, ADDR szFile, ADDR file
@@ -58,28 +54,36 @@ IDC_STATIC EQU (-1)
 D3DFVF_CUSTOMVERTEX EQU (D3DFVF_XYZ OR D3DFVF_DIFFUSE OR D3DFVF_TEX1)
 
 WinMain PROTO :HINSTANCE, :HINSTANCE, :LPSTR, :DWORD
-WndProc PROTO :HWND, :UINT, :WPARAM, :LPARAM
+
+
+WndProc PROTO :HWND, :UINT, :WPARAM, :LPARAM
 DlgProc PROTO :HWND, :UINT, :WPARAM, :LPARAM
 D3DInitialize PROTO :HWND
 D3DGeometry PROTO
-D3DTextures PROTO
+
+D3DTextures PROTO
 D3DUninitialize PROTO
 Render PROTO
-DrawHand PROTO :LPDIRECT3DTEXTURE8, :FLOAT
+
+DrawHand PROTO :LPDIRECT3DTEXTURE8, :FLOAT
 
 CUSTOMVERTEX STRUCT DWORD
-  x FLOAT ?
+
+  x FLOAT ?
   y FLOAT ?
   z FLOAT ?
   color DWORD ?
   tu FLOAT ?
   tv FLOAT ?
-CUSTOMVERTEX ENDS
+
+CUSTOMVERTEX ENDS
 
 
 
 
-.data
+
+
+.data
   szCogs db "Cogsworth", 0
   pD3D LPDIRECT3D8 NULL
   pD3DDevice LPDIRECT3DDEVICE8 NULL
@@ -94,10 +98,13 @@ CUSTOMVERTEX STRUCT DWORD
   pTXNose LPDIRECT3DTEXTURE8 NULL
 
   nTemp DWORD 0
-  fTemp FLOAT 1.0f
+
+  fTemp FLOAT 1.0f
   fNoseX FLOAT 0.075f
-  fNoseY FLOAT 0.62f
-  fNoseZ FLOAT 0.0f
+
+  fNoseY FLOAT 0.62f
+
+  fNoseZ FLOAT 0.0f
 
   mxUni D3DMATRIX < 1.0f, 0.0f, 0.0f, 0.0f,\
                     0.0f, 1.0f, 0.0f, 0.0f,\
@@ -109,7 +116,8 @@ CUSTOMVERTEX STRUCT DWORD
 .data?
   hInst HINSTANCE ?
   szStartupPath db MAX_PATH DUP(?)
-  szFile db MAX_PATH DUP(?)
+
+  szFile db MAX_PATH DUP(?)
 
 
 
@@ -125,7 +133,8 @@ CUSTOMVERTEX STRUCT DWORD
 
         invoke WinMain, hInst, NULL, NULL, SW_SHOWDEFAULT
         invoke ExitProcess, eax
-
+
+
 
     WinMain PROC hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nCmdShow:DWORD
         LOCAL wc:WNDCLASSEX
@@ -153,7 +162,8 @@ CUSTOMVERTEX STRUCT DWORD
         invoke GetDesktopWindow
         invoke CreateWindowEx, WS_EX_TOPMOST, ADDR szCogs, ADDR szCogs, WS_POPUP,\
             CW_USEDEFAULT, CW_USEDEFAULT, 256, 256, eax, NULL, hInst, NULL
-        mov hWnd, eax
+
+        mov hWnd, eax
         .IF eax==0
           invoke MessageBox, 0, addr szCogs, addr szCogs, 0
           mov eax, -1
@@ -168,7 +178,8 @@ CUSTOMVERTEX STRUCT DWORD
       MessageLoop:
         invoke PeekMessage, ADDR msg, NULL, 0, 0, PM_REMOVE
         .IF eax==0
-          invoke Render
+
+          invoke Render
         .ELSE
           cmp msg.message, WM_QUIT
           jz Terminate
@@ -196,7 +207,8 @@ CUSTOMVERTEX STRUCT DWORD
             invoke DialogBoxParam, hInst, IDD_ABOUT, hWnd, (OFFSET DlgProc), NULL
           .ENDIF
 
-        .ELSEIF message==WM_DESTROY
+
+        .ELSEIF message==WM_DESTROY
           invoke PostQuitMessage, 0
 
         .ELSEIF message==WM_PAINT
@@ -219,13 +231,15 @@ CUSTOMVERTEX STRUCT DWORD
           invoke LoadMenu, hInst, IDM_MAIN
           mov hMenu, eax
           .IF hMenu!=NULL
-            invoke GetSubMenu, hMenu, 0
+
+            invoke GetSubMenu, hMenu, 0
             mov ecx, lParam
             and ecx, 0000ffffh
             mov edx, lParam
             shr edx, 16
             invoke TrackPopupMenu, eax, TPM_LEFTALIGN OR TPM_TOPALIGN OR TPM_RIGHTBUTTON, ecx, edx, 0, hWnd, NULL
-            invoke DestroyMenu, hMenu
+
+            invoke DestroyMenu, hMenu
           .ENDIF
 
         .ELSE
@@ -258,7 +272,8 @@ CUSTOMVERTEX STRUCT DWORD
         .ELSE
           mov eax, FALSE
           ret
-        .ENDIF
+
+        .ENDIF
 
         mov eax, TRUE
         ret
@@ -277,7 +292,9 @@ CUSTOMVERTEX STRUCT DWORD
           ret
         .ENDIF
 
-        mcall [pD3D], IDirect3D8_GetAdapterDisplayMode, D3DADAPTER_DEFAULT, ADDR d3ddm
+
+
+        mcall [pD3D], IDirect3D8_GetAdapterDisplayMode, D3DADAPTER_DEFAULT, ADDR d3ddm
         FailCheck
 
         invoke RtlZeroMemory, ADDR d3dpp, SIZEOF D3DPRESENT_PARAMETERS
@@ -286,7 +303,8 @@ CUSTOMVERTEX STRUCT DWORD
         mov d3dpp.SwapEffect, D3DSWAPEFFECT_DISCARD
         mov d3dpp.Windowed, TRUE
         mcall [pD3D], IDirect3D8_CreateDevice, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, ADDR d3dpp, ADDR pD3DDevice
-        FailCheck
+
+        FailCheck
 
 	  mcall [pD3DDevice], IDirect3DDevice8_SetRenderState, D3DRS_CULLMODE, D3DCULL_NONE
 	  mcall [pD3DDevice], IDirect3DDevice8_SetRenderState, D3DRS_LIGHTING, FALSE
@@ -295,7 +313,8 @@ CUSTOMVERTEX STRUCT DWORD
 	  mcall [pD3DDevice], IDirect3DDevice8_SetRenderState, D3DRS_ALPHABLENDENABLE, TRUE
 
         invoke D3DGeometry
-        invoke D3DTextures
+
+        invoke D3DTextures
 
         ret
     D3DInitialize ENDP
@@ -327,11 +346,13 @@ CUSTOMVERTEX STRUCT DWORD
         mcall [pVB], IDirect3DVertexBuffer8_Lock, 0, SIZEOF gVertexData, ADDR pVertices, NULL
         FailCheck
 
-        memcpy pVertices, OFFSET gVertexData, (3*SIZEOF gVertexData)
-        mcall [pVB], IDirect3DVertexBuffer8_Unlock
+        invoke crt_memcpy, pVertices, OFFSET gVertexData, (3*SIZEOF gVertexData)
+        mcall [pVB], IDirect3DVertexBuffer8_Unlock
+
 
         mov nTemp, 0
-        fild nTemp
+
+        fild nTemp
         fld fNoseX
         fsub
         fst fNoseX
@@ -341,8 +362,6 @@ CUSTOMVERTEX STRUCT DWORD
 
 
     D3DTextures PROC
-        LOCAL pVertices:PTR
-
         .data
           szBkg db "data\background.png", 0
           szBelly db "data\belly.png", 0
@@ -365,7 +384,8 @@ CUSTOMVERTEX STRUCT DWORD
     D3DTextures ENDP
 
 
-    D3DUninitialize PROC
+
+    D3DUninitialize PROC
         Release pTXBkg
         Release pTXBelly
         Release pTXCogs
@@ -383,51 +403,70 @@ CUSTOMVERTEX STRUCT DWORD
 
 
     Render PROC
-        LOCAL mxRot:D3DXMATRIX
-        LOCAL tm:SYSTEMTIME
-        LOCAL rad:FLOAT
 
-        invoke GetLocalTime, ADDR tm
+        LOCAL mxRot:D3DXMATRIX
+        LOCAL tm:SYSTEMTIME
+
+        LOCAL rad:FLOAT
+
+
+        invoke GetLocalTime, ADDR tm
 
         mcall [pD3DDevice], IDirect3DDevice8_Clear, 0, NULL, D3DCLEAR_TARGET, 000000ffh, fTemp, 0
-        mcall [pD3DDevice], IDirect3DDevice8_BeginScene
+
+        mcall [pD3DDevice], IDirect3DDevice8_BeginScene
 
         mcall [pD3DDevice], IDirect3DDevice8_SetStreamSource, 0, pVB, SIZEOF CUSTOMVERTEX
-        mcall [pD3DDevice], IDirect3DDevice8_SetVertexShader, D3DFVF_CUSTOMVERTEX
+
+        mcall [pD3DDevice], IDirect3DDevice8_SetVertexShader, D3DFVF_CUSTOMVERTEX
 
 
         mcall [pD3DDevice], IDirect3DDevice8_SetTransform, 256, ADDR mxUni
-        mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXBkg
-        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
-        mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXBelly
-        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
-
+
+        mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXBkg
+
+        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
+
+
+        mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXBelly
+
+        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
+
+
+
 
         ; DrawPendulum
         .IF tm.wMilliseconds>499
           neg tm.wMilliseconds
-          add tm.wMilliseconds, 1000
+          add tm.wMilliseconds, 1000
+
         .ENDIF
         sub tm.wMilliseconds, 250
         fild tm.wMilliseconds
         fldpi
         fmul
-        mov nTemp, 1200
+        
+mov nTemp, 1200
         fild nTemp
-        fdiv
+        
+fdiv
         fst rad
-        invoke D3DXMatrixRotationZ, ADDR mxRot, rad
-        mcall [pD3DDevice], IDirect3DDevice8_SetTransform, 256, ADDR mxRot
+        invoke D3DXMatrixRotationZ, ADDR mxRot, rad
+
+
+        mcall [pD3DDevice], IDirect3DDevice8_SetTransform, 256, ADDR mxRot
         mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXPendulum
         mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 4, 2
 
 
         mcall [pD3DDevice], IDirect3DDevice8_SetTransform, 256, ADDR mxUni
         mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXCogs
-        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
+
+        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
 
 
-        ; Draw Hands
+
+        ; Draw Hands
         fild tm.wSecond
         mov nTemp, 60
         fild nTemp
@@ -437,15 +476,21 @@ CUSTOMVERTEX STRUCT DWORD
         fst rad
         invoke DrawHand, pTXHour, rad
 
-        fild tm.wSecond
-        fst rad
-        invoke DrawHand, pTXMinute, rad
 
-
+        fild tm.wSecond
+        fst rad
+
+        invoke DrawHand, pTXMinute, rad
+
+
+
         mcall [pD3DDevice], IDirect3DDevice8_SetTransform, 256, ADDR mxUni
-        mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXNose
-        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
-
+
+        mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTXNose
+
+        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 0, 2
+
+
 
         mcall [pD3DDevice], IDirect3DDevice8_EndScene
         mcall [pD3DDevice], IDirect3DDevice8_Present, NULL, NULL, NULL, NULL
@@ -453,7 +498,8 @@ CUSTOMVERTEX STRUCT DWORD
     Render ENDP
 
 
-    DrawHand PROC pTX:LPDIRECT3DTEXTURE8, minute:FLOAT
+
+    DrawHand PROC pTX:LPDIRECT3DTEXTURE8, minute:FLOAT
         LOCAL mxRot:D3DXMATRIX
         LOCAL mxTr:D3DXMATRIX
         LOCAL mxC:D3DXMATRIX
@@ -468,14 +514,19 @@ CUSTOMVERTEX STRUCT DWORD
         fst rad
         invoke D3DXMatrixRotationZ, ADDR mxRot, rad
 
-        invoke D3DXMatrixTranslation, ADDR mxTr, fNoseX, fNoseY, fNoseZ
+        
+invoke D3DXMatrixTranslation, ADDR mxTr, fNoseX, fNoseY, fNoseZ
         invoke D3DXMatrixMultiply, ADDR mxC, ADDR mxRot, ADDR mxTr
 
         mcall [pD3DDevice], IDirect3DDevice8_SetTransform, 256, ADDR mxC
         mcall [pD3DDevice], IDirect3DDevice8_SetTexture, 0, pTX
-        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 8, 2
-
-        ret
-    DrawHand ENDP
+
+        mcall [pD3DDevice], IDirect3DDevice8_DrawPrimitive, D3DPT_TRIANGLESTRIP, 8, 2
+
+
+
+        ret
+
+    DrawHand ENDP
 
   end cogsworth

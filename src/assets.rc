@@ -1,5 +1,5 @@
 
-#include "\masm32\include\resource.h"
+#include <winres.h>
 
 #define IDI_COGSWORTH 101
 
@@ -10,11 +10,10 @@
 #define IDD_ABOUT 201
 #define IDC_CREDITS 202
 #define IDOK 1
-#define IDC_STATIC (-1)
 
 
 
-IDI_COGSWORTH ICON "Cogsworth.ico"
+IDI_COGSWORTH ICON "../assets/Cogsworth.ico"
 
 
 

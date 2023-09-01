@@ -1,8 +1,6 @@
 
-#include "stdafx.h"
-#include "d3d.h"
-#include "resource.h"
-
+#include "scene.h"
+#include "assets.h"
 
 HINSTANCE hInst;
 
